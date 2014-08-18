@@ -3,6 +3,7 @@
  */
 
 // Set some vars
+var fs = require('fs');
 var appName = require('../../package.json').name;
 var ports = require('ports');
 var crypto = require('crypto');
@@ -10,6 +11,10 @@ var exec = require('child_process').exec;
 var GitServer = require('git-server');
 var users = new Array();
 var servicePass = Math.random().toString(36).slice(2,11);
+var firstRun = false;
+
+// Synchronously check if this is the first run
+if (!fs.existsSync('./www.git')) firstRun = true;
 
 // Override git-server authentication to allow CouchDB admins only
 GitServer.prototype.getUser = function(username, password, repo) {
@@ -87,6 +92,16 @@ module.exports = function (hoodie, cb) {
             });
         }
     });
+    
+    // Push existing WWW on first run
+    if (firstRun) {
+        setTimeout(function(){
+            child = exec('cd www && git init && git add . && git commit -m "First commit." && git remote add origin http://gitserv:'+servicePass+'@localhost:'+port+'/www.git && git push -u origin master', function (error, stdout, stderr) {
+                console.log(stdout);
+                console.log(stderr);
+            });
+        },2000);
+    }
     
     // Output something useful
     console.log('Hoodie Git Plugin: Listening on port '+port);

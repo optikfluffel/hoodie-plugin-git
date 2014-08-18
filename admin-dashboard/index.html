@@ -18,26 +18,18 @@
         Your app backend includes a built in Git server for automatic deployment to the Hoodie WWW directory from the www.git repo master branch.
         </p>
         
-        <h2>Start with an existing repo</h2>
+        <h2>Clone the www repo</h2>
         <pre>
             <code>
-                cd /your/repo
-                git remote add origin <span class="gitHost"></span>/www.git
-                git push -u origin master
+                git clone <span class="gitHost"></span>/www.git
             </code>
         </pre>
-        
-        <h2>Create a new repo</h2>
+        <h2>Push Changes to the www repo</h2>
         <pre>
             <code>
-                mkdir /your/repo
-                cd /your/repo
-                echo "Welcome to your app's site" > index.html
-                git init
-                git add index.html
-                git commit -m "first commit"
-                git remote add origin <span class="gitHost"></span>/www.git
-                git push -u origin master
+                git add .
+                git commit -a -m "Changed my app site."
+                git push origin master
             </code>
         </pre>
     </div>
