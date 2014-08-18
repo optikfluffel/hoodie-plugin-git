@@ -1,7 +1,7 @@
 {
   "name": "hoodie-plugin-git",
-  "version": "0.0.2",
-  "description": "A plugin to add Git Hoodie",
+  "version": "0.0.3",
+  "description": "A plugin to add a Git server to Hoodie with auto WWW deployment",
   "author": {
     "name": "Dale Shaw",
     "email": "dale@xiatron.com",
@@ -16,7 +16,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/appback/hoodie-plugin-git"
+    "url": "https://github.com/appback/hoodie-plugin-git/"
   },
   "keywords": [
     "hoodie",
