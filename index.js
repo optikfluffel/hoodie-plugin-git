@@ -1,0 +1,96 @@
+/*
+ * Copyright 2014 Xiatron LLC
+ */
+
+// Set some vars
+var appName = require('../../package.json').name;
+var ports = require('ports');
+var crypto = require('crypto');
+var exec = require('child_process').exec;
+var GitServer = require('git-server');
+var users = new Array();
+var servicePass = Math.random().toString(36).slice(2,11);
+
+// Override git-server authentication to allow CouchDB admins only
+GitServer.prototype.getUser = function(username, password, repo) {
+    var userObject, _i, _len, _ref;
+    _ref = repo.users;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        userObject = _ref[_i];
+        if (userObject.user.username === username) {
+            // Synchronously produce a CouchDB style admin passowrd hash
+            crypted_password = new Buffer(crypto.pbkdf2Sync(password, userObject.user.salt, 10, 20), 'binary').toString('hex');
+
+            // Look for a password or hash match
+            if (userObject.user.password === password || crypted_password === userObject.user.hash) {
+                return userObject;
+            }
+        }
+    }
+    return false;
+};
+
+// Run in the hoodie context
+module.exports = function (hoodie, cb) {
+    // Check plugin config for port and set it if necessary
+    if (!hoodie.config.get('port')) hoodie.config.set('port', ports.getPort(appName+'-hoodie-plugin-git'));
+
+    // Get the port this server will run on
+    var port = hoodie.config.get('port');
+    
+    // Setup all of CouchDB admins as git users with read/write
+    hoodie.request('GET', '_config/admins', {}, function(err, data){
+        for (var i in data) {
+            var pwData = data[i].replace('-pbkdf2-','').split(',');
+            var userObj = {
+                user: {
+                    username: i,
+                    hash: pwData[0],
+                    salt: pwData[1],
+                    password: ''
+                },
+                permissions:['R','W']
+            }
+            users.push(userObj);
+        };
+    });
+    
+    // Setup a service account as a git user with read/write
+    var userObj = {
+        user: {
+            username: 'gitserv',
+            hash: '',
+            salt: '',
+            password: servicePass
+        },
+        permissions:['R','W']
+    }
+    users.push(userObj);
+    
+    // Setup the www repository
+    var wwwRepo = {
+        name:'www',
+        anonRead:false,
+        users: users
+    }
+    
+    // Start the git server
+    server = new GitServer([wwwRepo], null, './', port);
+    
+    // Handle post updates
+    server.on('post-update', function(update, repo) {
+        if (repo.name === 'www') {
+            //  Delete www, clone master to www, then delete www/.git
+            child = exec('rm -Rf www && git clone http://gitserv:'+servicePass+'@localhost:'+port+'/www.git www && rm -Rf www/.git', function (error, stdout, stderr) {
+                console.log(stdout);
+                console.log(stderr);
+            });
+        }
+    });
+    
+    // Output something useful
+    console.log('Hoodie Git Plugin: Listening on port '+port);
+    
+    //Hoodie Callback
+    cb();
+}

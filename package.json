@@ -1,0 +1,41 @@
+{
+  "name": "hoodie-plugin-git",
+  "version": "0.0.1",
+  "description": "A plugin to add Git Hoodie",
+  "author": {
+    "name": "Dale Shaw",
+    "email": "dale@xiatron.com",
+    "url": "https://appback.com"
+  },
+  "contributors": [
+    {
+      "name": "Dale Shaw",
+      "email": "dale@xiatron.com",
+      "url": "https://appback.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appback/hoodie-plugin-git"
+  },
+  "keywords": [
+    "hoodie",
+    "git",
+    "deploy",
+    "www",
+    "appback"
+  ],
+  "homepage": "https://github.com/appback/hoodie-plugin-git",
+  "bugs": {
+    "url": "https://github.com/appback/hoodie-plugin-git/issues"
+  },
+  "dependencies": {
+    "ports": "1.1.0",
+    "git-server": "0.2.0"
+  },
+  "peerDependencies": {
+    "hoodie-server": ">= 1.2.4"
+  },
+  "main": "index.js",
+  "readmeFilename": "README.md"
+}

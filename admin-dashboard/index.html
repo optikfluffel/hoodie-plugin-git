@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" href="/_api/_plugins/_assets/styles/admin-dashboard-uikit.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Git</h1>
+        
+        <p>
+        Your app backend includes a built in Git server for automatic deployment to the Hoodie WWW directory from the www.git repo master branch.
+        </p>
+        
+        <h2>Start with an existing repo</h2>
+        <pre>
+            <code>
+                cd /your/repo
+                git remote add origin <span class="gitHost"></span>/www.git
+                git push -u origin master
+            </code>
+        </pre>
+        
+        <h2>Create a new repo</h2>
+        <pre>
+            <code>
+                mkdir /your/repo
+                cd /your/repo
+                echo "Welcome to your app's site" > index.html
+                git init
+                git add index.html
+                git commit -m "first commit"
+                git remote add origin <span class="gitHost"></span>/www.git
+                git push -u origin master
+            </code>
+        </pre>
+    </div>
+    <script src="/_api/_plugins/_assets/scripts/admin-dashboard-uikit.js"></script>
+    <script src="assets/vendor/underscore-min.js"></script>
+    <script src="assets/js/couchr.js"></script>
+    <script src="assets/js/git.js"></script>
+</body>
+</html>
