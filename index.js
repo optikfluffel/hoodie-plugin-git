@@ -11,10 +11,6 @@ var exec = require('child_process').exec;
 var GitServer = require('git-server');
 var users = new Array();
 var servicePass = Math.random().toString(36).slice(2,11);
-var firstRun = false;
-
-// Synchronously check if this is the first run
-if (!fs.existsSync('./www.git')) firstRun = true;
 
 // Override git-server authentication to allow CouchDB admins only
 GitServer.prototype.getUser = function(username, password, repo) {
@@ -86,22 +82,27 @@ module.exports = function (hoodie, cb) {
     server.on('post-update', function(update, repo) {
         if (repo.name === 'www') {
             //  Delete www, clone master to www, then delete www/.git
-            child = exec('rm -Rf www && git clone http://gitserv:'+servicePass+'@localhost:'+port+'/www.git www && rm -Rf www/.git', function (error, stdout, stderr) {
+            exec('rm -Rf www && git clone http://gitserv:'+servicePass+'@localhost:'+port+'/www.git www && rm -Rf www/.git', function (error, stdout, stderr) {
                 console.log(stdout);
                 console.log(stderr);
             });
         }
     });
     
-    // Push existing WWW on first run
-    if (firstRun) {
-        setTimeout(function(){
-            child = exec('cd www && git init && git add . && git commit -m "First commit." && git remote add origin http://gitserv:'+servicePass+'@localhost:'+port+'/www.git && git push -u origin master', function (error, stdout, stderr) {
-                console.log(stdout);
-                console.log(stderr);
-            });
-        },2000);
-    }
+    // Push existing WWW on to new repo
+    setTimeout(function(){
+        //Count the objects
+        exec('find ./www.git/objects -type f | wc -l', function (error, stdout, stderr) {
+            
+            //Push only if there's no objects
+            if (parseInt(stdout) === 0) {
+                exec('cd www && git init && git add . && git commit -m "First commit." && git remote add origin http://gitserv:'+servicePass+'@localhost:'+port+'/www.git && git push -u origin master', function (error, stdout, stderr) {
+                    console.log(stdout);
+                    console.log(stderr);
+                });
+            }
+        });
+    },4000);
     
     // Output something useful
     console.log('Hoodie Git Plugin: Listening on port '+port);
