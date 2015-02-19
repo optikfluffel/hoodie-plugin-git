@@ -1,6 +1,6 @@
 {
   "name": "hoodie-plugin-git",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A plugin to add a Git server to Hoodie with auto WWW deployment",
   "author": {
     "name": "Dale Shaw",
