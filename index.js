@@ -96,7 +96,7 @@ module.exports = function (hoodie, cb) {
             
             //Push only if there's no objects
             if (parseInt(stdout) === 0) {
-                exec('git config user.email "gitbot@localhost" && git config user.name "gitbot" && cd www && git init && git add . && git commit -m "First commit." && git remote add origin http://gitserv:'+servicePass+'@localhost:'+port+'/www.git && git push -u origin master', function (error, stdout, stderr) {
+                exec('cd www && git init && git config user.email "gitbot@localhost" && git config user.name "gitbot" && git add . && git commit -m "First commit." && git remote add origin http://gitserv:'+servicePass+'@localhost:'+port+'/www.git && git push -u origin master', function (error, stdout, stderr) {
                     console.log(stdout);
                     console.log(stderr);
                 });
