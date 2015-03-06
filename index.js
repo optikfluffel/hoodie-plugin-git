@@ -6,6 +6,7 @@
 var fs = require('fs');
 var appName = require('../../package.json').name;
 var ports = require('ports');
+var port = ports.getPort(appName+'-hoodie-plugin-git');
 var crypto = require('crypto');
 var exec = require('child_process').exec;
 var GitServer = require('git-server');
@@ -33,12 +34,6 @@ GitServer.prototype.getUser = function(username, password, repo) {
 
 // Run in the hoodie context
 module.exports = function (hoodie, cb) {
-    // Check plugin config for port and set it if necessary
-    if (!hoodie.config.get('port')) hoodie.config.set('port', ports.getPort(appName+'-hoodie-plugin-git'));
-
-    // Get the port this server will run on
-    var port = hoodie.config.get('port');
-    
     // Setup all of CouchDB admins as git users with read/write
     hoodie.request('GET', '_config/admins', {}, function(err, data){
         for (var i in data) {
