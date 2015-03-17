@@ -50,7 +50,7 @@ module.exports = function (hoodie, cb) {
             users.push(userObj);
         };
     });
-    
+
     // Setup a service account as a git user with read/write
     var userObj = {
         user: {
@@ -62,17 +62,17 @@ module.exports = function (hoodie, cb) {
         permissions:['R','W']
     }
     users.push(userObj);
-    
+
     // Setup the www repository
     var wwwRepo = {
         name:'www',
         anonRead:false,
         users: users
     }
-    
+
     // Start the git server
     server = new GitServer([wwwRepo], null, './', port);
-    
+
     // Handle post updates
     server.on('post-update', function(update, repo) {
         if (repo.name === 'www') {
@@ -83,12 +83,12 @@ module.exports = function (hoodie, cb) {
             });
         }
     });
-    
+
     // Push existing WWW on to new repo
     setTimeout(function(){
         //Count the objects
         exec('find ./www.git/objects -type f | wc -l', function (error, stdout, stderr) {
-            
+
             //Push only if there's no objects
             if (parseInt(stdout) === 0) {
                 exec('cd www && git init && git config user.email "gitbot@localhost" && git config user.name "gitbot" && git add . && git commit -m "First commit." && git remote add origin http://gitserv:'+servicePass+'@localhost:'+port+'/www.git && git push -u origin master', function (error, stdout, stderr) {
@@ -98,10 +98,10 @@ module.exports = function (hoodie, cb) {
             }
         });
     },4000);
-    
+
     // Output something useful
     console.log('Hoodie Git Plugin: Listening on port '+port);
-    
+
     //Hoodie Callback
     cb();
 }

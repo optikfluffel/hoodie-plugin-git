@@ -3,7 +3,7 @@ $(function () {
     *   This is an attempt to provide an app valid git url
     *   Mileage will vary so adpat accordingly
     */
-  
+
     if (window.location.host.indexOf('admin') > -1 && !window.location.port) { /* probably hosted on Appback */
         var gitHost = window.location.protocol+'//'+window.location.host.replace('admin','git');
         $('.gitHost').text(gitHost);
